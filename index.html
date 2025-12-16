@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>ESP32 OTA Flasher</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- ESP Web Tools -->
+  <script type="module" src="https://unpkg.com/esp-web-tools@10/dist/web/install-button.js?module"></script>
+
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #f5f7fa;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .box {
+      background: #fff;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      text-align: center;
+      width: 100%;
+      max-width: 420px;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      font-size: 22px;
+    }
+
+    esp-web-install-button::part(button) {
+      width: 100%;
+      padding: 16px;
+      font-size: 16px;
+      font-weight: 700;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    #status {
+      margin-top: 20px;
+      font-weight: 600;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+<div class="box">
+  <h1>⚡ ESP32 Firmware Flasher</h1>
+
+  <esp-web-install-button id="flashBtn"></esp-web-install-button>
+
+  <div id="status">✅ Nạp xong</div>
+</div>
+
+<script>
+  const firmwareUrl =
+    "https://raw.githubusercontent.com/hoangminh5210119/ota/main/merged_firmware.bin";
+
+  const manifest = {
+    name: "ESP32 OTA Firmware",
+    version: "1.0",
+    builds: [
+      {
+        chipFamily: "ESP32",
+        erase: true,
+        parts: [
+          {
+            path: firmwareUrl,
+            offset: 0
+          }
+        ]
+      }
+    ]
+  };
+
+  const manifestUrl =
+    "data:application/json;base64," +
+    btoa(JSON.stringify(manifest));
+
+  const flashBtn = document.getElementById("flashBtn");
+  const status = document.getElementById("status");
+
+  flashBtn.setAttribute("manifest", manifestUrl);
+
+  // Khi nạp xong
+  flashBtn.addEventListener("install-complete", () => {
+    status.style.display = "block";
+  });
+</script>
+
+</body>
+</html>
